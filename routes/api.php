@@ -25,11 +25,22 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
     Route::group(['prefix' => 'maid-services'], function () {
         Route::post('', [MaidServicesController::class, 'store']);
         Route::get('', [MaidServicesController::class, 'index']);
         Route::get('/{id}', [MaidServicesController::class, 'show']);
         Route::put('/{id}', [MaidServicesController::class, 'update']);
         Route::delete('/{id}', [MaidServicesController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'maid-details'], function () {
+        Route::group(['prefix' => 'experience'], function () {
+            Route::get('', [MaidServicesController::class, 'show']);
+            Route::post('', [MaidServicesController::class, 'show']);
+            Route::get('/{maid_id}', [MaidServicesController::class, 'show']);
+            Route::put('/{experience_id}', [MaidServicesController::class, 'show']);
+            Route::delete('/{experience_id}', [MaidServicesController::class, 'show']);
+        });
     });
 });
