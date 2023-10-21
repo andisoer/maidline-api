@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('maid_services', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('maid_id');
-            $table->string('name');
+            $table->unsignedBigInteger('services_id');
             $table->timestamps();
+
+            // Define the foreign key constraint
+            $table->foreign('maid_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('service_id')->references('id')->on('master_services')->onDelete('cascade');
         });
     }
 

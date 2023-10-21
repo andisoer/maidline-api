@@ -13,4 +13,9 @@ class MaidServices extends Model
     {
         return $this->belongsTo(User::class, 'maid_id');
     }
+
+    public function service()
+    {
+        return $this->belongsTo(MasterServices::class, 'service_id');
+    }
 }

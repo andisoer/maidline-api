@@ -16,6 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('maid_id');
             $table->text('description');
             $table->timestamps();
+
+            // Define the foreign key constraint
+            $table->foreign('maid_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
