@@ -30,7 +30,7 @@ class AuthController extends Controller
             return ApiResponse::success($data, status: 200);
         }
 
-        return ApiResponse::error(message: 'Akun tidak ditemukan', status: 401);
+        return ApiResponse::error(message: 'Account not found', status: 401);
     }
 
     public function register(Request $request)
@@ -57,7 +57,7 @@ class AuthController extends Controller
         Mail::to($user->email)->send(new SendOTP($otp));
 
 
-        return ApiResponse::success(message: 'Kode OTP berhasil dikirim', status: 200);
+        return ApiResponse::success(message: 'OTP have been sent to your email', status: 200);
     }
 
     public function verifyOTP(Request $request)
@@ -70,7 +70,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->where('otp', $request->otp)->first();
 
         if (!$user) {
-            return ApiResponse::error(message: 'Kode OTP Invalid', status: 422);
+            return ApiResponse::error(message: 'Invalid OTP', status: 422);
         }
 
         $user->otp = null;

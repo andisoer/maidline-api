@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MaidServicesController;
 
 
 /*
@@ -21,4 +22,14 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/verify-otp', [AuthController::class, 'verifyOTP'])->middleware('throttle:5,1');
     Route::post('/login/google', [AuthController::class, 'loginGoogle']);
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::group(['prefix' => 'maid-services'], function () {
+        Route::post('', [MaidServicesController::class, 'store']);
+        Route::get('', [MaidServicesController::class, 'index']);
+        Route::get('/{id}', [MaidServicesController::class, 'show']);
+        Route::put('/{id}', [MaidServicesController::class, 'update']);
+        Route::delete('/{id}', [MaidServicesController::class, 'destroy']);
+    });
 });
