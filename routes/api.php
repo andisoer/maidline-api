@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MaidController;
 use App\Http\Controllers\MaidServicesController;
 
 
@@ -34,13 +35,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/{id}', [MaidServicesController::class, 'destroy']);
     });
 
-    Route::group(['prefix' => 'maid-details'], function () {
-        Route::group(['prefix' => 'experience'], function () {
-            Route::get('', [MaidServicesController::class, 'show']);
-            Route::post('', [MaidServicesController::class, 'show']);
-            Route::get('/{maid_id}', [MaidServicesController::class, 'show']);
-            Route::put('/{experience_id}', [MaidServicesController::class, 'show']);
-            Route::delete('/{experience_id}', [MaidServicesController::class, 'show']);
-        });
+    Route::group(['prefix' => 'maids'], function () {
+        Route::get('', [MaidController::class, 'index']);
     });
 });

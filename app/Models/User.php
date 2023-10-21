@@ -50,4 +50,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'role_id'); // 'role_id' is the foreign key in the users table
     }
+
+    public function services()
+    {
+        return $this->hasMany(MasterServices::class, 'maid_id');
+    }
+
+    public function experiences()
+    {
+        return $this->hasMany(MaidExperience::class, 'maid_id');
+    }
 }
