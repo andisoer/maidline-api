@@ -16,8 +16,9 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
-Route::post('/verify-otp', [AuthController::class, 'verifyOTP'])->middleware('throttle:5,1');
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/verify-otp', [AuthController::class, 'verifyOTP'])->middleware('throttle:5,1');
+    Route::post('/login/google', [AuthController::class, 'loginGoogle']);
 });

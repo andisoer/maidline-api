@@ -9,6 +9,8 @@ use App\Mail\SendOTP;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Helpers\ApiResponse;
+use Laravel\Socialite\Facades\Socialite;
+
 
 class AuthController extends Controller
 {
@@ -81,5 +83,37 @@ class AuthController extends Controller
         $data = ['user' => $user, 'access_token' => $token];
 
         return ApiResponse::success($data, status: 200);
+    }
+
+    public function loginGoogle(Request $request)
+    {
+        // Validate the request from the frontend
+        $request->validate([
+            'google_token' => 'required',
+        ]);
+
+        $googleToken = $request->input('google_token');
+
+        // Verify the Google token
+        $user = Socialite::driver('google')->stateless()->userFromToken($googleToken);
+
+        // Check if the user with this Google email already exists in your application
+        $existingUser = User::where('email', $user->getEmail())->first();
+
+        if ($existingUser) {
+            // User exists, log them in using Sanctum
+            $token = $existingUser->createToken('authToken')->plainTextToken;
+            return response()->json(['message' => 'Login successful', 'token' => $token]);
+        } else {
+            // User doesn't exist, create a new user
+            $newUser = new User();
+            $newUser->name = $user->getName();
+            $newUser->email = $user->getEmail();
+            $newUser->save();
+
+            // Log in the newly created user using Sanctum
+            $token = $newUser->createToken('authToken')->plainTextToken;
+            return response()->json(['message' => 'Registration and login successful', 'token' => $token]);
+        }
     }
 }
