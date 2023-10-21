@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('maid_services', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('maid_id');
-            $table->unsignedBigInteger('services_id');
+            $table->unsignedBigInteger('service_id');
             $table->timestamps();
 
             // Define the foreign key constraint
