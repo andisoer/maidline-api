@@ -37,5 +37,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::group(['prefix' => 'maids'], function () {
         Route::get('', [MaidController::class, 'index']);
+        Route::post('', [MaidController::class, 'store']);
     });
 });

@@ -17,4 +17,9 @@ class MasterServices extends Model
     protected $fillable = [
         'service_name',
     ];
+
+    public function maid()
+    {
+        return $this->belongsToMany(User::class, 'maid_services', 'service_id', 'user_id')->withTimestamps();
+    }
 }

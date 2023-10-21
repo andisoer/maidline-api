@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
 use App\Models\MasterServices;
+use App\Models\Services;
 use Illuminate\Http\Request;
 
 class MaidServicesController extends Controller

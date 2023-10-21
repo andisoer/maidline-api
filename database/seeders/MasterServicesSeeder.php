@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\MasterServices;
+use App\Models\Services;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

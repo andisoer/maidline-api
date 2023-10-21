@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('service_id');
             $table->timestamps();
 
-            // Define the foreign key constraint
+
             $table->foreign('maid_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('service_id')->references('id')->on('master_services')->onDelete('cascade');
         });

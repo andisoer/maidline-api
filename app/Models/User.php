@@ -53,7 +53,7 @@ class User extends Authenticatable
 
     public function services()
     {
-        return $this->hasMany(MasterServices::class, 'maid_id');
+        return $this->belongsToMany(MasterServices::class, 'maid_services', 'maid_id', 'service_id')->withTimestamps();
     }
 
     public function experiences()
