@@ -12,10 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('role_id')->nullable()->after('email');
-
-            // Add a foreign key constraint to reference the roles table
-            $table->foreign('role_id')->references('id')->on('user_roles');
+            $table->string('about')->nullable()->after('email');
         });
     }
 
@@ -25,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['role_id']); // Remove the foreign key constraint
-            $table->dropColumn('role_id'); // Remove the column
+            $table->dropColumn('about');
         });
     }
 };
