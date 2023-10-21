@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SendOTP;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Helpers\ApiResponse;
 
 class AuthController extends Controller
 {
@@ -22,10 +23,12 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
 
-            return response()->json(['access_token' => $token]);
+            $data = ['user' => $user, 'access_token' => $token];
+
+            return ApiResponse::success($data, status: 200);
         }
 
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        return ApiResponse::error(message: 'Akun tidak ditemukan', status: 401);
     }
 
     public function register(Request $request)
@@ -51,7 +54,8 @@ class AuthController extends Controller
         // Send OTP to user's email
         Mail::to($user->email)->send(new SendOTP($otp));
 
-        return response()->json(['message' => 'User registered successfully']);
+
+        return ApiResponse::success(message: 'Kode OTP berhasil dikirim', status: 200);
     }
 
     public function verifyOTP(Request $request)
@@ -64,7 +68,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->where('otp', $request->otp)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'Invalid OTP'], 422);
+            return ApiResponse::error(message: 'Kode OTP Invalid', status: 422);
         }
 
         $user->otp = null;
@@ -74,6 +78,8 @@ class AuthController extends Controller
         // Authenticate the user using Sanctum
         $token = $user->createToken('authToken')->plainTextToken;
 
-        return response()->json(['access_token' => $token]);
+        $data = ['user' => $user, 'access_token' => $token];
+
+        return ApiResponse::success($data, status: 200);
     }
 }
