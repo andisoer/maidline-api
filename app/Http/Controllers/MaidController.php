@@ -31,34 +31,39 @@ class MaidController extends Controller
         $request->validate([
             'email' => 'required|email',
             'name' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Adjust image validation rules as needed
             'about' => 'required',
-            'experiences' => 'required|array|min:1',
-            'services_ids' => 'required|array|min:1',
+            'experiences' => 'required',
+            'services_ids' => 'required',
         ]);
+
+        $imagePath = $request->file('image')->store('user_images', 'public');
 
         // Create a new "Maid" user
         $maid = new User();
         $maid->name = $request->input('name');
         $maid->about = $request->input('about');
+        $maid->profile_picture = $imagePath;
         $maid->email = $request->input('email');
         $maid->password = bcrypt('maidline2023'); // Set the default password
         $maid->role_id = 3; // Assuming "Maid" role has the ID 3
         $maid->save();
 
         // Add experiences
-        $experiencesData = $request->input('experiences');
+        $experiencesData = json_decode($request->input('experiences'));
+
         $experiences = [];
 
         foreach ($experiencesData as $experienceData) {
             $experience = new MaidExperience();
-            $experience->description = $experienceData['name'];
+            $experience->description = $experienceData->name;
             $experience->maid_id = $maid->id;
             $experience->save();
             $experiences[] = $experience;
         }
 
         // Add Services
-        $serviceIds = $request->input('services_ids');
+        $serviceIds = json_decode($request->input('services_ids'));
         $maid->services()->sync($serviceIds);
 
         return ApiResponse::success(message: 'Maid added successfully', status: 200);
