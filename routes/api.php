@@ -7,7 +7,7 @@ use App\Http\Controllers\MaidController;
 use App\Http\Controllers\MaidHourlyPriceController;
 use App\Http\Controllers\MaidScheduleController;
 use App\Http\Controllers\MaidServicesController;
-
+use App\Http\Controllers\TransactionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,5 +49,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::group(['prefix' => 'schedule'], function () {
             Route::post('', [MaidScheduleController::class, 'store']);
         });
+    });
+
+    Route::group(['prefix' => 'transaction'], function () {
+        Route::post('', [TransactionsController::class, 'createPayment']);
+        Route::post('callback', [TransactionsController::class, 'handleCallback']);
     });
 });
