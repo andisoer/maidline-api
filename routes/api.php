@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MaidController;
+use App\Http\Controllers\MaidHourlyPriceController;
+use App\Http\Controllers\MaidScheduleController;
 use App\Http\Controllers\MaidServicesController;
 
 
@@ -35,8 +37,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/{id}', [MaidServicesController::class, 'destroy']);
     });
 
-    Route::group(['prefix' => 'maids'], function () {
+    Route::group(['prefix' => 'maid'], function () {
         Route::get('', [MaidController::class, 'index']);
         Route::post('', [MaidController::class, 'store']);
+
+
+        Route::group(['prefix' => 'hourly-price'], function () {
+            Route::post('', [MaidHourlyPriceController::class, 'store']);
+        });
+
+        Route::group(['prefix' => 'schedule'], function () {
+            Route::post('', [MaidScheduleController::class, 'store']);
+        });
     });
 });
