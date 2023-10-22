@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiResponse;
 use App\Models\MaidSchedule;
+use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class MaidScheduleController extends Controller
 {
@@ -19,31 +23,58 @@ class MaidScheduleController extends Controller
             'session' => 'required|integer',
         ]);
 
-        $userId = Auth::user()->id;
+        try {
+            DB::beginTransaction();
 
-        // Calculate the end date based on the duration
-        $startDate = $request->input('start_date');
-        $durationValue = $request->input('duration_value');
-        $durationUnit = $request->input('duration_unit');
+            $userId = Auth::user()->id;
 
-        if ($durationUnit === 'days') {
-            $endDate = strtotime($startDate . ' +' . $durationValue . ' days');
+            // Calculate the end date based on the duration
+            $startDate = $request->input('start_date');
+            $durationValue = $request->input('duration_value');
+            $durationUnit = $request->input('duration_unit');
+
+            if ($durationUnit === 'days') {
+                $endDate = strtotime($startDate . ' +' . $durationValue . ' days');
+            }
+
+            if ($durationUnit === 'hours') {
+                $endDate = strtotime($startDate . ' +0 days');
+            }
+
+            $maidId =  $request->input('maid_id');
+
+            // Create a new schedule record
+            $schedule = new MaidSchedule();
+            $schedule->user_id = $userId;
+            $schedule->maid_id = $maidId;
+            $schedule->start_date = $startDate;
+            $schedule->end_date = date('Y-m-d H:i:s', $endDate); // Convert back to a MySQL datetime format
+            $schedule->duration_value = $durationValue;
+            $schedule->duration_unit = $durationUnit;
+            $schedule->session = $request->input('session');
+            $schedule->save();
+
+            $paymentService = new PaymentService();
+
+            $paymentLink = $paymentService->createPayment($maidId, $schedule->id);
+            if ($paymentLink == null) {
+                return ApiResponse::error(message: 'Failed to create schedule', status: 401);
+
+                DB::rollBack();
+            }
+
+            DB::commit();
+
+            $data = [
+                "schedule" => $schedule,
+                "payment_link" => $paymentLink,
+            ];
+
+            return ApiResponse::success(data: $data, message: 'Schedule created successfully', status: 200);
+        } catch (Throwable $e) {
+            return ApiResponse::error(message: 'Failed to create schedule', status: 401);
+
+            DB::rollBack();
         }
-
-        if ($durationUnit === 'hours') {
-            $endDate = strtotime($startDate . ' +0 days');
-        }
-        // Create a new schedule record
-        $schedule = new MaidSchedule();
-        $schedule->user_id = $userId;
-        $schedule->maid_id = $request->input('maid_id');
-        $schedule->start_date = $startDate;
-        $schedule->end_date = date('Y-m-d H:i:s', $endDate); // Convert back to a MySQL datetime format
-        $schedule->duration_value = $durationValue;
-        $schedule->duration_unit = $durationUnit;
-        $schedule->session = $request->input('session');
-        $schedule->save();
-
-        return response()->json(['message' => 'Schedule created successfully']);
     }
 }

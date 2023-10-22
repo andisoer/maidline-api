@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiResponse;
 use App\Models\MaidHourlyPrice;
 use Illuminate\Http\Request;
 
@@ -19,6 +20,6 @@ class MaidHourlyPriceController extends Controller
         $maidHourlyPrice->price = $request->price;
         $maidHourlyPrice->save();
 
-        return response()->json(['message' => 'Maid hourly price stored successfully']);
+        return ApiResponse::success(message: 'Maid hourly price stored successfully', status: 200);
     }
 }

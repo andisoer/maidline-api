@@ -52,7 +52,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::group(['prefix' => 'transaction'], function () {
-        Route::post('', [TransactionsController::class, 'createPayment']);
         Route::post('callback', [TransactionsController::class, 'handleCallback']);
     });
 });
