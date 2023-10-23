@@ -57,6 +57,7 @@ class MaidController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
+            'gender' => 'required|in:male,female',
             'name' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Adjust image validation rules as needed
             'about' => 'required',
@@ -70,6 +71,7 @@ class MaidController extends Controller
         $maid = new User();
         $maid->name = $request->input('name');
         $maid->about = $request->input('about');
+        $maid->gender = $request->input('gender');
         $maid->profile_picture = $imagePath;
         $maid->email = $request->input('email');
         $maid->password = bcrypt('maidline2023'); // Set the default password
