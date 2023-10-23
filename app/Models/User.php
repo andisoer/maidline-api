@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(MaidExperience::class, 'maid_id');
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(MaidSchedule::class, 'maid_id');
+    }
 }
