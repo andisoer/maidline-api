@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ApiResponse;
 use App\Models\MaidExperience;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use PhpParser\Node\Stmt\TryCatch;
-use Throwable;
 
 class MaidController extends Controller
 {
@@ -18,7 +15,7 @@ class MaidController extends Controller
 
         $roleMaid = 3;
 
-        $query = User::where('role_id', $roleMaid)->with(['services']);
+        $query = User::where('role_id', $roleMaid)->with(['services', 'hourlyPrice']);
 
         // Filter by gender if the parameter is provided
         if ($request->has('gender')) {
@@ -47,10 +44,20 @@ class MaidController extends Controller
         }
 
         // Paginate the result
-        $perPage = $request->input('per_page', 10); // You can specify the default per page value
         $maids = $query->paginate($perPage);
 
         return ApiResponse::success($maids, status: 200);
+    }
+
+    public function show($userId)
+    {
+        $maid = User::with(['services', 'experiences', 'hourlyPrice'])->find(($userId));
+
+        if (!$maid) {
+            return ApiResponse::error(message: 'Maid not found', status: 404);
+        }
+
+        return ApiResponse::success($maid, status: 200);
     }
 
     public function store(Request $request)

@@ -11,6 +11,10 @@ class MaidHourlyPrice extends Model
 
     protected $fillable = ['maid_id', 'price'];
 
+    protected $casts = [
+        'price' => 'float'
+    ];
+
     public function maid()
     {
         return $this->belongsTo(User::class);

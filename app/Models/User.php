@@ -65,4 +65,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(MaidSchedule::class, 'maid_id');
     }
+
+    public function hourlyPrice()
+    {
+        return $this->hasOne(MaidHourlyPrice::class, 'maid_id');
+    }
 }
