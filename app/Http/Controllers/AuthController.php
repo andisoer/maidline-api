@@ -43,7 +43,7 @@ class AuthController extends Controller
         ]);
 
         // Generate OTP
-        $otp = mt_rand(1000, 9999);
+        $otp = mt_rand(100000, 999999);
 
         // Save user with OTP
         $user = User::create([
@@ -56,6 +56,10 @@ class AuthController extends Controller
         // Send OTP to user's email
         Mail::to($user->email)->send(new SendOTP($otp));
 
+        $user->last_email_send_at = Carbon::now()->toDateTimeString();
+        $user->otp_expired_at = Carbon::now()->addMinutes(5)->toDateTimeString();
+        $user->save();
+
 
         return ApiResponse::success(message: 'OTP have been sent to your email', status: 200);
     }
@@ -67,10 +71,13 @@ class AuthController extends Controller
             'otp' => 'required|numeric',
         ]);
 
-        $user = User::where('email', $request->email)->where('otp', $request->otp)->first();
+        $user = User::where('email', $request->email)
+            ->where('otp', $request->otp)
+            ->where('otp_expired_at', '>=', Carbon::now())
+            ->first();
 
         if (!$user) {
-            return ApiResponse::error(message: 'Invalid OTP', status: 422);
+            return ApiResponse::error(message: 'OTP Expired / Invalid', status: 422);
         }
 
         $user->otp = null;
@@ -114,6 +121,46 @@ class AuthController extends Controller
             // Log in the newly created user using Sanctum
             $token = $newUser->createToken('authToken')->plainTextToken;
             return response()->json(['message' => 'Registration and login successful', 'token' => $token]);
+        }
+    }
+
+    public function resendOTP(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users',
+        ]);
+
+        $email = $request->input('email');
+
+        $user = User::where('email', $email)
+            ->where('otp_expired_at', '>=', Carbon::now())
+            ->first();
+
+        if ($user) {
+            // OTP exists and is not expired; resend the same OTP
+            // You can choose to resend the same OTP code or generate a new one here
+            // For example, to resend the same OTP:
+            // Send the existing OTP code to the user's email/phone (not implemented here)
+            $message = 'OTP resent successfully';
+            return ApiResponse::success(message: $message, status: 200);
+        } else {
+            // OTP doesn't exist or has expired; generate a new OTP
+            // Generate OTP
+            $otp = mt_rand(100000, 999999);
+            $user = User::where('email', $email)->first();
+
+            $user->otp = $otp;
+            $user->last_email_send_at = Carbon::now()->toDateTimeString();
+            $user->otp_expired_at = Carbon::now()->addMinutes(5)->toDateTimeString();
+            $user->save();
+
+            // Send OTP to user's email
+            Mail::to($user->email)->send(new SendOTP($otp));
+
+            // Code to send the OTP to the user via email, SMS, etc. (not included here)
+            // Implement the logic to send the OTP code to the provided email address
+            $message = 'OTP resent successfully';
+            return ApiResponse::success(message: $message, status: 200);
         }
     }
 }

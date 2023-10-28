@@ -24,6 +24,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/verify-otp', [AuthController::class, 'verifyOTP'])->middleware('throttle:5,1');
+    Route::post('/resend-otp', [AuthController::class, 'resendOTP'])->middleware('throttle:5,1');
     Route::post('/login/google', [AuthController::class, 'loginGoogle']);
 });
 
@@ -39,6 +40,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::group(['prefix' => 'maid'], function () {
         Route::get('', [MaidController::class, 'index']);
+        Route::get('/{id}', [MaidController::class, 'show']);
         Route::post('', [MaidController::class, 'store']);
 
 
