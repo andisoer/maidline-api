@@ -81,6 +81,7 @@ class AuthController extends Controller
         }
 
         $user->otp = null;
+        $user->otp_expired_at = null;
         $user->email_verified_at = Carbon::now()->toDateTimeString();
         $user->save();
 
