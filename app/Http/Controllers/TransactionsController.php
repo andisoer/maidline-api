@@ -2,17 +2,51 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiResponse;
 use App\Models\MaidHourlyPrice;
 use App\Models\MaidSchedule;
 use App\Models\Transactions;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Midtrans\Notification;
 use Midtrans\Snap;
 
-
 class TransactionsController extends Controller
 {
+    public function index(Request $request)
+    {
+        $perPage = $request->input('limit', 10);
+
+        $userId = Auth::user()->id;
+
+        $query = Transactions::where('user_id', $userId)->with(['maid']);
+
+        if ($request->has('service_id')) {
+            $serviceId = $request->input('service_id');
+            $query->whereHas('maid',  function ($query) use ($serviceId) {
+                $query->whereHas('services', function ($q) use ($serviceId) {
+                    $q->where('service_id', $serviceId);
+                });
+            });
+        }
+
+        $transaction = $query->paginate($perPage);
+
+        return ApiResponse::success($transaction, status: 200);
+    }
+
+    public function show($transactionId)
+    {
+        $transaction = Transactions::with(['user', 'maid.services', 'schedule'])->find(($transactionId));
+
+        if (!$transaction) {
+            return ApiResponse::error(message: 'Transaction not found', status: 404);
+        }
+
+        return ApiResponse::success($transaction, status: 200);
+    }
+
     // Callback handler for Midtrans
     public function handleCallback(Request $request)
     {

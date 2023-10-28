@@ -54,6 +54,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::group(['prefix' => 'transaction'], function () {
+        Route::get('', [TransactionsController::class, 'index']);
+        Route::get('/{transaction_id}', [TransactionsController::class, 'show']);
         Route::post('callback', [TransactionsController::class, 'handleCallback']);
     });
 });
