@@ -7,6 +7,7 @@ use App\Models\MaidHourlyPrice;
 use App\Models\MaidSchedule;
 use App\Models\Transactions;
 use App\Services\MidtransService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Notification;
@@ -21,6 +22,26 @@ class TransactionsController extends Controller
         $userId = Auth::user()->id;
 
         $query = Transactions::where('user_id', $userId)->with(['maid']);
+
+        if ($request->has('date')) {
+            $date = $request->input('date');
+            $query->whereDate('created_at', $date);
+        }
+
+        if ($request->has('on_going')) {
+            $onGoing = $request->input('on_going');
+            $today = Carbon::now()->toDateTimeString();
+            if ($onGoing == 1) {
+                $query->whereHas('schedule', function ($query) use ($today) {
+                    $query->whereDate('start_date', '<=', $today)
+                        ->whereDate('end_date', '>=', $today);
+                });
+            } else {
+                $query->whereHas('schedule', function ($query) use ($today) {
+                    $query->whereDate('end_date', '<', $today);
+                });
+            }
+        }
 
         if ($request->has('service_id')) {
             $serviceId = $request->input('service_id');
