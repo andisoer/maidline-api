@@ -7,6 +7,7 @@ use App\Http\Controllers\MaidController;
 use App\Http\Controllers\MaidHourlyPriceController;
 use App\Http\Controllers\MaidScheduleController;
 use App\Http\Controllers\MaidServicesController;
+use App\Http\Controllers\PromosController;
 use App\Http\Controllers\TransactionsController;
 
 /*
@@ -38,11 +39,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/{id}', [MaidServicesController::class, 'destroy']);
     });
 
+    Route::group(['prefix' => 'promos'], function () {
+        Route::get('', [PromosController::class, 'index']);
+        Route::post('', [PromosController::class, 'store']);
+    });
+
     Route::group(['prefix' => 'maid'], function () {
         Route::get('', [MaidController::class, 'index']);
         Route::get('/{id}', [MaidController::class, 'show']);
         Route::post('', [MaidController::class, 'store']);
-
 
         Route::group(['prefix' => 'hourly-price'], function () {
             Route::post('', [MaidHourlyPriceController::class, 'store']);

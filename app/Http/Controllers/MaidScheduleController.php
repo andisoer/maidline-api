@@ -56,7 +56,12 @@ class MaidScheduleController extends Controller
 
             $paymentService = new PaymentService();
 
-            $paymentLink = $paymentService->createPayment($maidId, $schedule->id);
+            $promoId = 0;
+            if ($request->has('promo_id')) {
+                $promoId = $request->input('promo_id');
+            }
+
+            $paymentLink = $paymentService->createPayment($maidId, $schedule->id, $promoId);
             if ($paymentLink == null) {
                 return ApiResponse::error(message: 'Failed to create schedule', status: 401);
 

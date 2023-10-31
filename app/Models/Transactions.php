@@ -9,6 +9,10 @@ class Transactions extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'amount' => 'int',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

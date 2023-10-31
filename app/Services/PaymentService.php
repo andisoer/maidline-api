@@ -4,13 +4,14 @@ namespace App\Services;
 
 use App\Models\MaidHourlyPrice;
 use App\Models\MaidSchedule;
+use App\Models\Promos;
 use App\Models\Transactions;
 use Midtrans\Snap;
 use Throwable;
 
 class PaymentService
 {
-    public function createPayment($maidId, $scheduledId)
+    public function createPayment($maidId, $scheduledId, $promoId)
     {
         try {
             new MidtransService();
@@ -36,6 +37,13 @@ class PaymentService
             }
 
             $amount = $hourlyPrice * $session * $duration_value;
+
+            if ($promoId != 0) {
+                $promo = Promos::where('id', $promoId)->first();
+
+                $discountNominal = $amount * ($promo->discount_percentage / 100);
+                $amount = $discountNominal;
+            }
 
             // Create a payment record in your database
             $payment = new Transactions();
