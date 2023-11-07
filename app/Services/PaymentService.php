@@ -63,7 +63,7 @@ class PaymentService
             $params = [
                 'transaction_details' => [
                     'order_id' => $payment->order_id,
-                    'gross_amount' => $payment->amount,
+                    'gross_amount' => $payment->total_amount,
                 ],
             ];
 

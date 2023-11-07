@@ -21,7 +21,7 @@ class TransactionsController extends Controller
 
         $userId = Auth::user()->id;
 
-        $query = Transactions::where('user_id', $userId)->with(['maid']);
+        $query = Transactions::where('user_id', $userId)->with(['maid'])->orderBy('created_at', 'desc');
 
         if ($request->has('date')) {
             $date = $request->input('date');
@@ -33,8 +33,7 @@ class TransactionsController extends Controller
             $today = Carbon::now()->toDateTimeString();
             if ($onGoing == 1) {
                 $query->whereHas('schedule', function ($query) use ($today) {
-                    $query->whereDate('start_date', '<=', $today)
-                        ->whereDate('end_date', '>=', $today);
+                    $query->whereDate('end_date', '>=', $today);
                 });
             } else {
                 $query->whereHas('schedule', function ($query) use ($today) {

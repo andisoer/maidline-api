@@ -11,6 +11,8 @@ class Transactions extends Model
 
     protected $casts = [
         'amount' => 'int',
+        'total_amount' => 'int',
+        'discount_amount' => 'int',
     ];
 
     public function user()
