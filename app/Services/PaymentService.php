@@ -37,12 +37,14 @@ class PaymentService
             }
 
             $amount = $hourlyPrice * $session * $duration_value;
+            $totalAmount = $amount;
+            $discountAmount = 0;
 
             if ($promoId != 0) {
                 $promo = Promos::where('id', $promoId)->first();
 
-                $discountNominal = $amount * ($promo->discount_percentage / 100);
-                $amount = $discountNominal;
+                $discountAmount = $amount * ($promo->discount_percentage / 100);
+                $totalAmount = $amount - $discountAmount;
             }
 
             // Create a payment record in your database
@@ -53,6 +55,8 @@ class PaymentService
             $payment->schedule_id = $scheduledId;
             $payment->hourly_price = $hourlyPrice;
             $payment->amount = $amount;
+            $payment->discount_amount = $discountAmount;
+            $payment->total_amount = $totalAmount;
             $payment->status = 'pending';
 
             // Create a Midtrans transaction request
