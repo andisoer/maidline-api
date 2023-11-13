@@ -9,6 +9,7 @@ use App\Http\Controllers\MaidScheduleController;
 use App\Http\Controllers\MaidServicesController;
 use App\Http\Controllers\PromosController;
 use App\Http\Controllers\TransactionsController;
+use App\Http\Controllers\AddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(['prefix' => 'promos'], function () {
         Route::get('', [PromosController::class, 'index']);
         Route::post('', [PromosController::class, 'store']);
+    });
+
+    Route::group(['prefix' => 'user'], function () {
+        Route::group(['prefix' => 'address'], function () {
+            Route::get('', [AddressController::class, 'index']);
+            Route::post('', [AddressController::class, 'store']);
+            Route::put('/{id}', [AddressController::class, 'update']);
+        });
     });
 
     Route::group(['prefix' => 'maid'], function () {
