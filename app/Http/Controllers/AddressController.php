@@ -14,7 +14,7 @@ class AddressController extends Controller
 
         $userId = auth()->user()->id;
 
-        $query = Address::where('user_id', auth()->user()->id);
+        $query = Address::where('user_id', auth()->user()->id)->orderBy('is_main', 'DESC');
 
         $address = $query->paginate($perPage);
 
