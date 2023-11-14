@@ -169,14 +169,15 @@ class AuthController extends Controller
     {
         $user = auth()->user();
         
-        $request->validate([
-            'name' => 'required|string',
-            // 'email' => 'required|email|unique:users',
-            'phone' => 'required|string|min:9',
-        ]);
-
-        $user->name = $request->input('name');
-        $user->phone = $request->input('phone');
+        if($request->has('name')) {
+            $user->name = $request->input('name');
+        }
+        
+        if($request->has('phone')) {
+            $user->phone = $request->input('phone');
+        }
+   
+        // $user->phone = $request->input('phone');
         // $user->email = $request->input('email');
 
         // Handle profile picture upload
@@ -188,6 +189,6 @@ class AuthController extends Controller
 
         $user->save();
 
-        return ApiResponse::success(message: 'Edit profile succeed', status: 200);
+        return ApiResponse::success(message: 'Edit profile succeed', data: $user, status: 200);
     }
 }
