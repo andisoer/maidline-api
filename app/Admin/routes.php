@@ -15,5 +15,5 @@ Route::group([
     $router->resource('users', UserController::class);
     $router->resource('promos', PromoController::class);
     $router->resource('transactions', TransactionController::class);
-
+    $router->resource('master-services', MasterServicesController::class);
 });
