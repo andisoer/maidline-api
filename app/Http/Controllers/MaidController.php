@@ -73,13 +73,14 @@ class MaidController extends Controller
         ]);
 
         $imagePath = $request->file('image')->store('user_images', 'public');
+        $fullUrl = asset('storage/'.$imagePath);
 
         // Create a new "Maid" user
         $maid = new User();
         $maid->name = $request->input('name');
         $maid->about = $request->input('about');
         $maid->gender = $request->input('gender');
-        $maid->profile_picture = $imagePath;
+        $maid->profile_picture = $fullUrl;
         $maid->email = $request->input('email');
         $maid->password = bcrypt('maidline2023'); // Set the default password
         $maid->role_id = 3; // Assuming "Maid" role has the ID 3
