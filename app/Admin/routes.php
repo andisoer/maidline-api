@@ -16,4 +16,5 @@ Route::group([
     $router->resource('promos', PromoController::class);
     $router->resource('transactions', TransactionController::class);
     $router->resource('master-services', MasterServicesController::class);
+    $router->resource('maid-schedules', MaidScheduleController::class);
 });
