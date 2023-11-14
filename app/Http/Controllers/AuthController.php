@@ -164,4 +164,30 @@ class AuthController extends Controller
             return ApiResponse::success(message: $message, status: 200);
         }
     }
+
+    public function editProfile(Request $request)
+    {
+        $user = auth()->user();
+        
+        $request->validate([
+            'name' => 'required|string',
+            // 'email' => 'required|email|unique:users',
+            'phone' => 'required|string|min:9',
+        ]);
+
+        $user->name = $request->input('name');
+        $user->phone = $request->input('phone');
+        // $user->email = $request->input('email');
+
+        // Handle profile picture upload
+        if ($request->hasFile('photo')) {
+            $imagePath = $request->file('photo')->store('user_images', 'public');
+            $fullUrl = asset('storage/'.$imagePath);
+            $user->profile_picture = $fullUrl;
+        }
+
+        $user->save();
+
+        return ApiResponse::success(message: 'Edit profile succeed', status: 200);
+    }
 }

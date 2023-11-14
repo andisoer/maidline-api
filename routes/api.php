@@ -46,6 +46,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::group(['prefix' => 'user'], function () {
+        Route::group(['prefix' => 'profile'], function () {
+            Route::post('/edit', [AuthController::class, 'editProfile']);
+        });
+
         Route::group(['prefix' => 'address'], function () {
             Route::get('', [AddressController::class, 'index']);
             Route::post('', [AddressController::class, 'store']);

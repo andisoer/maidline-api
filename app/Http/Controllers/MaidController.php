@@ -70,6 +70,7 @@ class MaidController extends Controller
             'about' => 'required',
             'experiences' => 'required',
             'services_ids' => 'required',
+            'phone' => 'required|string|min:9',
         ]);
 
         $imagePath = $request->file('image')->store('user_images', 'public');
@@ -82,6 +83,7 @@ class MaidController extends Controller
         $maid->gender = $request->input('gender');
         $maid->profile_picture = $fullUrl;
         $maid->email = $request->input('email');
+        $maid->phone = $request->input('phone');
         $maid->password = bcrypt('maidline2023'); // Set the default password
         $maid->role_id = 3; // Assuming "Maid" role has the ID 3
         $maid->save();
