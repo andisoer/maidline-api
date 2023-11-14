@@ -20,6 +20,7 @@ class Address extends Model
 
     protected $casts = [
         'is_main' => 'int',
+        'user_id' => 'int',
     ];
 
     public function user()

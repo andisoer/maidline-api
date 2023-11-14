@@ -48,7 +48,7 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'role_id'); // 'role_id' is the foreign key in the users table
+        return $this->belongsTo(UserRoles::class, 'role_id'); // 'role_id' is the foreign key in the users table
     }
 
     public function services()

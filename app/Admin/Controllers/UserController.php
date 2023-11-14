@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Models\User;
+use App\Models\UserRoles;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -30,7 +31,7 @@ class UserController extends AdminController
         $grid->column('email', __('Email'));
         $grid->column('phone', __('Phone'));
         $grid->column('gender', __('Gender'));
-        $grid->column('profile_picture', __('Profile picture'));
+        $grid->column('profile_picture', __('Profile picture'))->image(100, 100);;
 
         return $grid;
     }
@@ -77,16 +78,14 @@ class UserController extends AdminController
         $form->text('name', __('Name'));
         $form->email('email', __('Email'));
         $form->mobile('phone', __('Phone'));
-        $form->text('gender', __('Gender'))->default('male');
+        $form->select('gender', 'Gender')->options([
+            "male" => 'Male',
+            "female" => 'Female',
+        ]);
         $form->text('about', __('About'));
-        $form->textarea('profile_picture', __('Profile picture'));
-        $form->number('role_id', __('Role id'));
-        $form->datetime('email_verified_at', __('Email verified at'))->default(date('Y-m-d H:i:s'));
-        $form->datetime('last_email_send_at', __('Last email send at'))->default(date('Y-m-d H:i:s'));
+        $form->image('profile_picture', __('Profile picture'))->uniqueName()->move(asset('storage/'.'user_images/'));
+        $form->select('Role')->options(UserRoles::all()->pluck('name','id'));
         $form->password('password', __('Password'));
-        $form->text('otp', __('Otp'));
-        $form->datetime('otp_expired_at', __('Otp expired at'))->default(date('Y-m-d H:i:s'));
-        $form->text('remember_token', __('Remember token'));
 
         return $form;
     }
